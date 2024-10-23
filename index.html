@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr" data-fr-scheme="system">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no,date=no,address=no,email=no,url=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Utilisation de int-tel-input avec le DSFR</title>
+    <link href="
+    https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.12/dist/dsfr.min.css
+    " rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/css/intlTelInput.min.css">
+</head>
+
+<body>
+    <header role="banner" class="fr-header">
+        <div class="fr-header__body">
+            <div class="fr-container">
+                <div class="fr-header__body-row">
+                    <div class="fr-header__brand fr-enlarge-link">
+                        <div class="fr-header__brand-top">
+                            <div class="fr-header__logo">
+                                <p class="fr-logo"> République<br aria-hidden="true" />française</p>
+                            </div>
+                        </div>
+                        <div class="fr-header__service"> <a href="/" title="Accueil - Site.gouv.fr">
+                                <p class="fr-header__service-title">Site.gouv.fr</p>
+                            </a>
+                            <p class="fr-header__service-tagline">Gestion du numéro de téléphone</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="fr-container">
+        <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w fr-grid-row--top">
+            <section class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <h1 class="fr-h3">Gestion du numéro de téléphone</h1>
+                <form id="phone_form">
+                    <fieldset class="fr-fieldset" id="phone-fieldset">
+                        <legend class="fr-fieldset__legend">
+                            Votre numéro de téléphone
+                        </legend>
+                        <div class="fr-input-group" id="phone-input-group">
+                            <label for="phone" class="fr-sr-only">Saisie du numéro de téléphone</label>
+                            <input type="tel" id="phone" name="phone" value="" class="fr-input"
+                                aria-describedby="input-desc" />
+                            <p id="input-desc" class="fr-error-text fr-hidden" role="alert"></p>
+                        </div>
+                    </fieldset>
+                    <button class="fr-btn" type="submit">Vérifier ce numéro</button>
+                </form>
+            </section>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/intlTelInput.min.js"></script>
+    <script>
+        const input_phone = document.querySelector("#phone");
+
+        let iti = window.intlTelInput(input_phone, {
+            loadUtilsOnInit: "https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/utils.js",
+            initialCountry: "fr",
+            preferredCountries: ['fr', 'gp', 're'],
+            customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
+                return "Exemple : " + selectedCountryPlaceholder;
+            },
+            countrySearch: false
+        });
+
+        document.getElementById("phone_form").addEventListener("submit", function (event) {
+            event.preventDefault()
+            const isValid = iti.isValidNumber();
+            const descMsgP = document.getElementById("input-desc");
+            const phoneFieldset = document.getElementById("phone-fieldset");
+            const errorMap = ["numéro invalide", "indicatif invalide", "trop court", "trop long", "numéro invalide"];
+            descMsgP.classList.remove("fr-hidden");
+
+            if (isValid) {
+                descMsgP.classList.replace("fr-error-text", "fr-valid-text");
+                phoneFieldset.classList.add("fr-fieldset--success");
+                phoneFieldset.classList.remove("fr-fieldset--error");
+                descMsgP.setAttribute("role", "status");
+                descMsgP.textContent = "Numéro de téléphone valide.";
+            }
+            else {
+                descMsgP.classList.replace("fr-valid-text", "fr-error-text");
+                phoneFieldset.classList.remove("fr-fieldset--success");
+                phoneFieldset.classList.add("fr-fieldset--error");
+                descMsgP.setAttribute("role", "alert");
+                const errorCode = iti.getValidationError();
+                descMsgP.textContent = `Numéro de téléphone non valide : ${errorMap[errorCode]}.`;
+            }
+        });
+    </script>
+</body>
+
+</html>
