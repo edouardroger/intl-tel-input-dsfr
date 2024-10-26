@@ -61,7 +61,6 @@
         let iti = window.intlTelInput(input_phone, {
             loadUtilsOnInit: "https://cdn.jsdelivr.net/npm/intl-tel-input@24.6.0/build/js/utils.js",
             initialCountry: "fr",
-            preferredCountries: ['fr', 'gp', 're'],
             customPlaceholder: function (selectedCountryPlaceholder, selectedCountryData) {
                 return "Exemple : " + selectedCountryPlaceholder;
             },
@@ -77,17 +76,17 @@
             descMsgP.classList.remove("fr-hidden");
 
             if (isValid) {
+                descMsgP.setAttribute("role", "status");
                 descMsgP.classList.replace("fr-error-text", "fr-valid-text");
                 phoneFieldset.classList.add("fr-fieldset--success");
                 phoneFieldset.classList.remove("fr-fieldset--error");
-                descMsgP.setAttribute("role", "status");
                 descMsgP.textContent = "Numéro de téléphone valide.";
             }
             else {
+                descMsgP.setAttribute("role", "alert");
                 descMsgP.classList.replace("fr-valid-text", "fr-error-text");
                 phoneFieldset.classList.remove("fr-fieldset--success");
                 phoneFieldset.classList.add("fr-fieldset--error");
-                descMsgP.setAttribute("role", "alert");
                 const errorCode = iti.getValidationError();
                 descMsgP.textContent = `Numéro de téléphone non valide : ${errorMap[errorCode]}.`;
             }
